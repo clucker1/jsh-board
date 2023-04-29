@@ -11,8 +11,24 @@ public class HomeController {
     @Autowired
     MemoService memoService;  // MemoService 인터페이스의 구현체를 필드 주입
     */
-    @GetMapping
+    @GetMapping("/")
     public String goHome() {
         return "/main/index";
+    }
+    @GetMapping("/buttons")
+    public String goButtons() {
+        return "/misc/buttons";
+    }
+    @GetMapping("/cards")
+    public String goCards() {
+        return "/misc/cards";
+    }
+    @GetMapping("/charts")
+    public String goCharts() {
+        return "/misc/charts";
+    }
+    @GetMapping("/colors")
+    public String goColors() {
+        return "/misc/utilities-color";
     }
 }
