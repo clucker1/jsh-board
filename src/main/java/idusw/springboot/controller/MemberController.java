@@ -40,6 +40,16 @@ public class MemberController {
         session.invalidate();
         return "redirect:/";
     }
+    @GetMapping(value = {"", "/list"})
+    public String listMember2(Model model) {
+        List<Member> result = null;
+        if((result = memberService.readList()) != null) {
+            model.addAttribute("list", result);
+            return "/members/list2";
+        }
+        else
+            return "/errors/404";
+    }
     @GetMapping(value = {"", "/"})
     public String listMember(Model model) {
         List<Member> result = null;
@@ -57,6 +67,7 @@ public class MemberController {
     }
     @PostMapping("/")
     public String createMember(@ModelAttribute("member") Member member, Model model) { // 등록 처리 -> service -> repository -> service -> controller
+        System.out.println(member);
         if(memberService.create(member) > 0 ) // 정상적으로 레코드의 변화가 발생하는 경우 영향받는 레코드 수를 반환
             return "redirect:/";
         else
