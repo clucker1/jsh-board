@@ -49,7 +49,7 @@ public class MemberController {
         PageResultDTO<Member, MemberEntity> resultDTO = memberService.getList(pageRequestDTO);
         if(resultDTO != null) {
             model.addAttribute("list", resultDTO.getDtoList()); // record
-            model.addAttribute("pageList", resultDTO.getPageList()); //Page number List
+            model.addAttribute("result", resultDTO); //Page number List
             return "/members/list";
         }
         else
