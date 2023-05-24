@@ -49,10 +49,10 @@ public class MemberControllerTests {
     @Test
     void initializeMember() {
         // Integer 데이터 흐름, Lambda 식 - 함수형 언어의 특징을 활용
-        IntStream.rangeClosed(1, 33).forEach(i -> {
+        IntStream.rangeClosed(1, 101).forEach(i -> {
             MemberEntity member = MemberEntity.builder()
                     .seq(Long.valueOf(i))
-                    .email("e" + i + "@induk.ac.kr")  // 201909059 -> 19059
+                    .email("ab" + i + "@induk.ac.kr") // 200412045 -> 04045
                     .pw("pw" + i)
                     .name("name" + i)
                     .build();
@@ -75,11 +75,15 @@ public class MemberControllerTests {
 
     @Test
     public void testPageList() {
-        PageRequestDTO pageRequestDTO = PageRequestDTO.builder().page(10).perPage(3).build();
+        PageRequestDTO pageRequestDTO = PageRequestDTO.builder()
+                .page(11) // 선택한 page
+                .perPage(5) // record 수
+                .perPagination(5) // 페이지 번호 표시 갯수
+                .build();
         PageResultDTO<Member, MemberEntity> resultDTO = memberService.getList(pageRequestDTO);
         // print records in page
-//        for(Member member : resultDTO.getDtoList())
-//            System.out.println(member);
+       for(Member member : resultDTO.getDtoList())
+           System.out.println(member);
         /**
          *  boolean 은 lombok으로 generation할 때 isPrev()를 생성함, setter 는 setPrev()
          *  int totalPage 인 경우 getter는 getTotalPage(), setter setTotalPage()
@@ -90,9 +94,11 @@ public class MemberControllerTests {
         System.out.println("Next : " + resultDTO.isNext());
         System.out.println("Total Page : " + resultDTO.getTotalPage());
 
-        resultDTO.getPageList().forEach(i -> System.out.println(i));
+        // Java Lambda : ->, 함수형 인터 페이스, Method Chaining 방식
+        //resultDTO.getPageList().forEach(i -> System.out.println(i));
 
         for(Integer i : resultDTO.getPageList())
-            System.out.println(i);
+            System.out.format("%3d",i);
+
     }
 }

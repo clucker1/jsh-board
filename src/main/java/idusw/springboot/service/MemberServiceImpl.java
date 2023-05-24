@@ -124,7 +124,9 @@ public class MemberServiceImpl implements MemberService {
 
         BooleanBuilder booleanBuilder =  findByCondition(requestDTO);
         Page<MemberEntity> result = memberRepository.findAll(booleanBuilder, pageable);
+
         Function<MemberEntity, Member> fn = (entity -> entityToDto(entity));
+
         PageResultDTO pageResultDTO = new PageResultDTO<>(result, fn, requestDTO.getPerPagination());
         return pageResultDTO;
     }
@@ -144,6 +146,11 @@ public class MemberServiceImpl implements MemberService {
         System.out.println("findByCondition " + type + " : " + keyword);
 
         BooleanBuilder conditionBuilder = new BooleanBuilder();
+        // select * from member where
+        // seq > 0
+        // email=keyword or name = keyword
+        // seq > 0 and email=keyword or name = keyword
+        // select * from member where seq > 0 and email=keyword or name = keyword
         if(type.contains("e")) { // email로 검색
             conditionBuilder.or(qMemberEntity.email.contains(keyword));
         }
