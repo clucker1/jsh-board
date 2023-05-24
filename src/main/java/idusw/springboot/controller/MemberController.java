@@ -22,6 +22,33 @@ public class MemberController {
         this.memberService = memberService;
     }
     HttpSession session = null;
+
+    /*
+    @GetMapping(value = {"", "/{pn}/{size}"})
+    public String listMemberPagination(@PathVariable("pn") int pn, @PathVariable("size") int size, Model model) {
+    */
+    @GetMapping(value ={"", "/"} ) // ?page=&perPage=
+    public String listMemberPagination(@RequestParam(value="page", required = false, defaultValue = "1") int page,
+                                       @RequestParam(value="perPage", required = false, defaultValue = "10") int perPage,
+                                       @RequestParam(value="perPagination", required = false, defaultValue ="5") int perPagination,
+                                       @RequestParam(value="type", required = false, defaultValue ="e") String type,
+                                       @RequestParam(value="keyword", required = false, defaultValue ="@") String keyword,
+                                       Model model) {
+        PageRequestDTO pageRequestDTO = PageRequestDTO.builder()
+                .page(page)
+                .perPage(perPage)
+                .perPagination(perPagination)
+                .type(type)
+                .keyword(keyword)
+                .build();
+        PageResultDTO<Member, MemberEntity> resultDTO = memberService.getList(pageRequestDTO);
+        if(resultDTO != null) {
+            model.addAttribute("result", resultDTO); //page number list
+            return "/members/list"; // view : template engine - thymeleaf .html
+        }
+        else
+            return "/errors/404";
+    }
     @GetMapping("/login-form")
     public String getLoginform(Model model) {
         model.addAttribute("member", Member.builder().build()); // email / pw 전달을 위한 객체
@@ -43,18 +70,7 @@ public class MemberController {
         session.invalidate();
         return "redirect:/";
     }
-    @GetMapping(value = {"", "/list/{pn}/{size}"})
-    public String listMemberPagination(@PathVariable("pn") int pn,@PathVariable("size") int size, Model model) {
-        PageRequestDTO pageRequestDTO = PageRequestDTO.builder().page(pn).size(size).build();
-        PageResultDTO<Member, MemberEntity> resultDTO = memberService.getList(pageRequestDTO);
-        if(resultDTO != null) {
-            model.addAttribute("list", resultDTO.getDtoList()); // record
-            model.addAttribute("result", resultDTO); //Page number List
-            return "/members/list";
-        }
-        else
-            return "/errors/404";
-    }
+/*
     @GetMapping(value = {"", "/"})
     public String listMember(Model model) {
         List<Member> result = null;
@@ -65,6 +81,9 @@ public class MemberController {
         else
             return "/errors/404";
     }
+
+ */
+
     @GetMapping("/register-form")
     public String getRegisterForm(Model model) { // form 요청 -> view (template engine)
         model.addAttribute("member", Member.builder().build());
@@ -72,7 +91,6 @@ public class MemberController {
     }
     @PostMapping("/")
     public String createMember(@ModelAttribute("member") Member member, Model model) { // 등록 처리 -> service -> repository -> service -> controller
-        System.out.println(member);
         if(memberService.create(member) > 0 ) // 정상적으로 레코드의 변화가 발생하는 경우 영향받는 레코드 수를 반환
             return "redirect:/";
         else
@@ -90,7 +108,7 @@ public class MemberController {
         return "/members/detail";
     }
 
-    @PutMapping("/{seq}")
+    @PutMapping("/{seq}") // @PostMapping("/{seq}/update")
     public String updateMember(@ModelAttribute("member") Member member, Model model) { // 수정 처리 -> service -> repository -> service -> controller
         if(memberService.update(member) > 0 ) {
             session.setAttribute("mb", member);
@@ -99,7 +117,7 @@ public class MemberController {
         else
             return "/errors/404";
     }
-    @DeleteMapping("/{seq}")
+    @DeleteMapping("/{seq}") // @PostMapping("/{seq}/delete")
     public String deleteMember(@ModelAttribute("member") Member member) { // 삭제 처리 -> service -> repository -> service -> controller
         if(memberService.delete(member) > 0) {
             session.invalidate();
