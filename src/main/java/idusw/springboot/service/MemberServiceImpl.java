@@ -8,6 +8,7 @@ import idusw.springboot.domain.PageResultDTO;
 import idusw.springboot.entity.MemberEntity;
 import idusw.springboot.entity.QMemberEntity;
 import idusw.springboot.repository.MemberRepository;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -111,13 +112,13 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public PageResultDTO<Member, MemberEntity> getList(PageRequestDTO requestDTO) {
-        Sort sort = Sort.by("seq").descending();
+        //Sort sort = Sort.by("seq").descending();
+        Sort sort = Sort.by("seq").ascending();
         /*
         if(requestDTO.getSort() == null)
             sort = Sort.by("seq").descending();
         else
             sort = Sort.by("seq").ascending();
-
          */
         Pageable pageable = requestDTO.getPageable(sort);
         //Page<MemberEntity> result = memberRepository.findAll(pageable);
@@ -128,29 +129,33 @@ public class MemberServiceImpl implements MemberService {
         Function<MemberEntity, Member> fn = (entity -> entityToDto(entity));
 
         PageResultDTO pageResultDTO = new PageResultDTO<>(result, fn, requestDTO.getPerPagination());
+
         return pageResultDTO;
     }
 
-    private BooleanBuilder findByCondition(PageRequestDTO pageRequestDTO) {  // Condition (검색 조건)을 QueryDSL 을 활용하여 객체로 생성
+    private BooleanBuilder findByCondition(PageRequestDTO pageRequestDTO) {
+
         String type = pageRequestDTO.getType();
+
         BooleanBuilder booleanBuilder = new BooleanBuilder();
+
         QMemberEntity qMemberEntity = QMemberEntity.memberEntity;
+
         BooleanExpression expression = qMemberEntity.seq.gt(0L); // where seq > 0 and title == "title"
         booleanBuilder.and(expression);
+
         if(type == null || type.trim().length() == 0) {
             return booleanBuilder;
         }
 
         String keyword = pageRequestDTO.getKeyword();
 
-        System.out.println("findByCondition " + type + " : " + keyword);
-
         BooleanBuilder conditionBuilder = new BooleanBuilder();
         // select * from member where
         // seq > 0
-        // email=keyword or name = keyword
-        // seq > 0 and email=keyword or name = keyword
-        // select * from member where seq > 0 and email=keyword or name = keyword
+        // email=keyword or name=keyword
+        // seq > 0 and email=keyword or name=keyword
+        // select * from member where seq > 0 and email=keyword or name=keyword
         if(type.contains("e")) { // email로 검색
             conditionBuilder.or(qMemberEntity.email.contains(keyword));
         }
