@@ -11,9 +11,9 @@ public class HomeController {
     @Autowired
     MemoService memoService;  // MemoService 인터페이스의 구현체를 필드 주입
     */
-    @GetMapping("/")
+    @GetMapping
     public String goHome() {
-        return "/main/index";
+        return "redirect:/boards";
     }
     @GetMapping("/buttons")
     public String goButtons() {

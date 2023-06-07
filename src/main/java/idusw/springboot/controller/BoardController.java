@@ -38,14 +38,17 @@ public class BoardController {
     public String postBoard(@ModelAttribute("board") Board dto, Model model, HttpServletRequest request) {
         session = request.getSession();
         Member member = (Member) session.getAttribute("mb");
-        // form에서 hidden 전송하는 방식으로 변경
-        dto.setWriterSeq(member.getSeq());
-        dto.setWriterEmail(member.getEmail());
-        dto.setWriterName(member.getName());
+        if(member != null) {
+            // form에서 hidden 전송하는 방식으로 변경
+            dto.setWriterSeq(member.getSeq());
+            dto.setWriterEmail(member.getEmail());
+            dto.setWriterName(member.getName());
 
-        Long bno = Long.valueOf(boardService.registerBoard(dto));
+            Long bno = Long.valueOf(boardService.registerBoard(dto));
 
-        return "redirect:/boards"; // 등록 후 목록 보기
+            return "redirect:/boards"; // 등록 후 목록 보기, redirection, get method
+        }else
+            return "redirect:/members/login-form"; // 로그인이 안된 상태인 경우
     }
 
     @GetMapping("")
@@ -59,8 +62,8 @@ public class BoardController {
         // Long bno 값을 사용하는 방식을 Board 객체에 bno를 설정하여 사용하는 방식으로 변경
         Board board = boardService.findBoardById(Board.builder().bno(bno).build());
         boardService.updateBoard(board);
-        model.addAttribute("dto", boardService.findBoardById(board));
-        return "reg-form";
+        model.addAttribute("board", boardService.findBoardById(board));
+        return "/boards/detail";
     }
 
     @GetMapping("/{bno}/up-form")

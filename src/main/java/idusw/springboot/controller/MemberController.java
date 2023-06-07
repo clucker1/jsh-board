@@ -63,7 +63,7 @@ public class MemberController {
             return "redirect:/";
         }
         else
-            return "/main/error";
+            return "/main/404";
     }
     @GetMapping("/logout")
     public String logoutMember() {
