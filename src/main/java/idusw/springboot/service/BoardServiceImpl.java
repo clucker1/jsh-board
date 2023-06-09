@@ -10,6 +10,7 @@ import idusw.springboot.repository.BoardRepository;
 import idusw.springboot.repository.ReplyRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -21,13 +22,17 @@ import java.util.function.Function;
 
 @RequiredArgsConstructor
 @Service
+@Log4j2
 public class BoardServiceImpl implements BoardService {
-    private BoardRepository boardRepository;
-    private ReplyRepository replyRepository;
-    
+    private final BoardRepository boardRepository;
+    private final ReplyRepository replyRepository;
+
+    /*
     public BoardServiceImpl(BoardRepository boardRepository) {
         this.boardRepository = boardRepository;
+        this.replyRepository = replyRepository;
     }
+     */
 
     @Override
     public int registerBoard(Board board) {
