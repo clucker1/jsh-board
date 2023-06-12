@@ -66,9 +66,12 @@ public class BoardServiceImpl implements BoardService {
     @Transactional
     @Override
     public int updateBoard(Board board) {
-        BoardEntity entity = BoardEntity.builder().title(board.getTitle()).content(board.getContent()).build();
-        if(boardRepository.save(entity) != null){
-            return  1;
+        BoardEntity entity = BoardEntity.builder()
+                .title(board.getTitle())
+                .content(board.getContent())
+                .build();
+        if (boardRepository.save(entity) != null) { // 저장 성공
+            return 1;
         } else {
             return 0;
         }
