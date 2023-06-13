@@ -35,8 +35,12 @@ public class MemberServiceImpl implements MemberService {
                 .name(m.getName())
                 .pw(m.getPw())
                 .build();
-        if(memberRepository.save(entity) != null) // 저장 성공
-            return 1;
+        if(memberRepository.getByEmail(m.getEmail()) == null){
+            if(memberRepository.save(entity) != null) // 저장 성공
+                return 1;
+            else
+                return 0;
+        }
         else
             return 0;
     }
