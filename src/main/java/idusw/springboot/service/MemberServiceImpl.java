@@ -111,6 +111,15 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
+    public int checkEmail(Member m) {
+        List<MemberEntity> memberEntityList = memberRepository.getMemberEntitiesByEmail(m.getEmail());
+        if(memberEntityList.size() > 0)
+            return 1;
+        else
+            return 0;
+    }
+
+    @Override
     public PageResultDTO<Member, MemberEntity> getList(PageRequestDTO requestDTO) {
         //Sort sort = Sort.by("seq").descending();
         Sort sort = Sort.by("seq").ascending();

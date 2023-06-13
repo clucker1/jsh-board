@@ -30,14 +30,40 @@
                             <div class="text-center">
                                 <h1 class="h4 text-gray-900 mb-4">Create an Account!</h1>
                             </div>
-                            <form class="user" th:action="@{'/members/register'}" th:object="${member}" th:method="post">
+                            <script>
+                                function checkEmail(){
+                                    var email = $('#exampleInputEmail').val();
+                                    $.ajax({
+                                        url:'/members/check-email',
+                                        type:'post',
+                                        data:{email:email},
+                                        success:function (cnt){
+                                            if(cnt==0){
+                                                $('.email_ok').css("display","inline-block");
+                                                $('.email_already').css("display","none");
+                                            } else {
+                                                $('.email_already').css("display","inline-block");
+                                                $('.email_ok').css("display","none");
+                                            }
+                                        },
+                                        error:function (){
+                                            alert("에러입니다");
+                                        }
+                                    });
+                                };
+                            </script>
+                            <form class="user" th:action="@{'/members/'}" th:object="${member}" th:method="post">
                                 <div class="form-group row">
                                     <input type="text" name="name" th:field="*{name}" class="form-control form-control-user" id="exampleFirstName"
                                             placeholder=" Name">
                                 </div>
                                 <div class="form-group">
                                     <input type="email" name="email" th:field="*{email}" class="form-control form-control-user" id="exampleInputEmail"
-                                        placeholder="Email Address">
+                                        placeholder="Email Address" oninput="checkEmail();">
+                                </div>
+                                <div class="col-sm-6">
+                                    <span class="email_ok">ok : 사용 가능</span>
+                                    <span class="email_already">check : 사용 불가능</span>
                                 </div>
                                 <div class="form-group row">
                                     <div class="col-sm-6 mb-3 mb-sm-0">

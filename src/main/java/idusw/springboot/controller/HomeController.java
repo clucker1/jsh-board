@@ -15,6 +15,18 @@ public class HomeController {
     public String goHome() {
         return "redirect:/boards";
     }
+    @GetMapping("/home")
+    public String goHome2() {
+        return "redirect:/boards";
+    }
+    @GetMapping("/login")
+    public String goLogins() {
+        return "redirect:/members/login-form";
+    }
+    @GetMapping("/register")
+    public String goRegister() {
+        return "redirect:/members/register-form";
+    }
     @GetMapping("/buttons")
     public String goButtons() {
         return "/misc/buttons";

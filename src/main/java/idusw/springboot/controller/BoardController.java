@@ -35,7 +35,7 @@ public class BoardController {
     }
 
     @PostMapping("")
-    public String postBoard(@ModelAttribute("board") Board dto, Model model, HttpServletRequest request) {
+    public String postBoard(@ModelAttribute("board") Board dto,HttpServletRequest request) {
         session = request.getSession();
         Member member = (Member) session.getAttribute("mb");
         if(member != null) {
