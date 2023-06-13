@@ -51,6 +51,10 @@
                             <h2 class="fw-bolder mb-4 mt-5">Content</h2>
                             <p class="fs-5 mb-4" th:text="${board.content}"></p>
                         </section>
+                        <a class="btn btn-primary" th:href="@{'/boards/' + ${board.bno} + '/up-form'}">수정</a>
+                        <form class="mb-4" th:action="@{'/boards/'  + ${board.bno}}" th:object="${board}" th:method="delete">
+                            <input type="submit" value="삭제" class="btn btn-primary btn-user btn-block">
+                        </form>
                     </article>
                     <!-- Comments section-->
                     <section class="mb-5">

@@ -3,6 +3,7 @@ package idusw.springboot.controller;
 import idusw.springboot.domain.Board;
 import idusw.springboot.domain.Member;
 import idusw.springboot.domain.PageRequestDTO;
+import idusw.springboot.domain.PageResultDTO;
 import idusw.springboot.service.BoardService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -27,8 +28,6 @@ public class BoardController {
         Member member = (Member) session.getAttribute("mb");
         if (member != null) {
             model.addAttribute("board", Board.builder().build());
-            System.out.println(member.getEmail());
-            //model.addAttribute("member", Member.builder().build());
             return "/boards/reg-form";
         } else
             return "redirect:/members/login-form"; // 로그인이 안된 상태인 경우
@@ -52,8 +51,20 @@ public class BoardController {
     }
 
     @GetMapping("")
-    public String getBoards(PageRequestDTO pageRequestDTO, Model model) {
-        model.addAttribute("list", boardService.findBoardAll(pageRequestDTO));
+    public String getBoards(@RequestParam(value="page", required = false, defaultValue = "1") int page,
+                            @RequestParam(value="perPage", required = false, defaultValue = "8") int perPage,
+                            @RequestParam(value="perPagination", required = false, defaultValue = "5") int perPagination,
+                            @RequestParam(value="type", required = false, defaultValue = "e") String type,
+                            @RequestParam(value="keyword", required = false, defaultValue = "") String keyword, Model model) {
+        PageRequestDTO pageRequestDTO = PageRequestDTO.builder()
+                .page(page)
+                .perPage(perPage)
+                .perPagination(perPagination)
+                .type(type)
+                .keyword(keyword)
+                .build();
+        PageResultDTO<Board, Object[]> dto = boardService.findBoardAll(pageRequestDTO);
+        model.addAttribute("list", dto);
         return "/boards/list";
     }
 
@@ -81,7 +92,7 @@ public class BoardController {
     }
 
     @GetMapping("/{bno}/del-form")
-    public String getDelForm(@PathVariable("idx") Long bno, Model model) {
+    public String getDelForm(@PathVariable("bno") Long bno, Model model) {
         Board board = boardService.findBoardById(Board.builder().bno(bno).build());
         model.addAttribute("board", board);
         return "/boards/del-form";

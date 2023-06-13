@@ -22,7 +22,7 @@ import java.util.function.Function;
 
 @RequiredArgsConstructor
 @Service
-@Log4j2
+@Transactional
 public class BoardServiceImpl implements BoardService {
     private final BoardRepository boardRepository;
     private final ReplyRepository replyRepository;
@@ -35,9 +35,9 @@ public class BoardServiceImpl implements BoardService {
      */
 
     @Override
-    public int registerBoard(Board board) {
+    public int registerBoard(Board dto) {
 
-        BoardEntity entity = dtoToEntity(board);
+        BoardEntity entity = dtoToEntity(dto);
 
         if(boardRepository.save(entity) != null) // 저장 성공
             return 1;
@@ -64,21 +64,21 @@ public class BoardServiceImpl implements BoardService {
         return new PageResultDTO<>(result, fn, 5);
     }
 
-    @Transactional
     @Override
     public int updateBoard(Board board) {
-        BoardEntity entity = BoardEntity.builder()
+        BoardEntity updateBoard = BoardEntity.builder()
+                .bno(board.getBno())
                 .title(board.getTitle())
                 .content(board.getContent())
+                .writer(boardRepository.findById(board.getBno()).get().getWriter())
                 .build();
-        if (boardRepository.save(entity) != null) { // 저장 성공
+        if (boardRepository.save(updateBoard) != null) { // 저장 성공
             return 1;
         } else {
             return 0;
         }
     }
 
-    @Transactional
     @Override
     public int deleteBoard(Board board) {
         replyRepository.deleteByBno(board.getBno());  // 댓글 삭제
